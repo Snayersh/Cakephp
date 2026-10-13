@@ -1,0 +1,33 @@
+# Composer dependencies
+/vendor/
+
+# Temporary and Cache files
+/tmp/cache/models/*
+/tmp/cache/persistent/*
+/tmp/cache/views/*
+/tmp/sessions/*
+/tmp/tests/*
+!/tmp/cache/empty
+!/tmp/sessions/empty
+!/tmp/tests/empty
+
+# Log files
+/logs/*
+!/logs/empty
+
+# Sensitive Environment file (preserve .env.example)
+.env
+
+# Uploaded images (preserve default avatars or placeholder)
+/webroot/img/empleados/*
+!/webroot/img/empleados/emp*.jpg
+!/webroot/img/empleados/avatar-default.svg
+!/webroot/img/empleados/empty
+
+# IDE & OS files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db

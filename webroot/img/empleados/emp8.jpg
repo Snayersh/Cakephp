@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="g8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5b21b6" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="30" fill="url(#g8)" />
+  <circle cx="100" cy="80" r="38" fill="rgba(255,255,255,0.25)" />
+  <path d="M 35 185 C 40 135, 160 135, 165 185 Z" fill="rgba(255,255,255,0.25)" />
+  <text x="100" y="93" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="34" font-weight="bold" fill="#ffffff" text-anchor="middle">MG</text>
+  <rect x="25" y="155" width="150" height="26" rx="13" fill="rgba(0,0,0,0.3)" />
+  <text x="100" y="172" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Mariana Gutiérrez</text>
+</svg>
