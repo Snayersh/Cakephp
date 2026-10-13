@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 maxOptions: 200,
                 placeholder: placeholder,
                 dropdownParent: 'body',
-                plugins: ['clear_button'],
+                plugins: ['clear_button', 'no_backspace_delete'],
                 render: {
                     no_results: function(data, escape) {
                         return '<div class="no-results p-2 text-muted fs-xs">No hay coincidencias para "' + escape(data.input) + '"</div>';
@@ -139,6 +139,31 @@ document.addEventListener('DOMContentLoaded', function () {
                         isFilterForm.submit();
                     }
                 }
+            });
+
+            // Gestión dinámica de texto por defecto vs búsqueda escribible:
+            // Al escribir cualquier carácter, el texto por defecto / selección actual se borra/oculta de inmediato.
+            // Si el usuario borra lo que escribió (no pone nada), el texto por defecto se restaura automáticamente.
+            const syncItemVisibility = function () {
+                const query = (ts.control_input.value || '').trim();
+                const items = ts.control.querySelectorAll('.item');
+                if (query.length > 0) {
+                    items.forEach(function (el) { el.style.display = 'none'; });
+                } else {
+                    items.forEach(function (el) { el.style.display = ''; });
+                }
+            };
+
+            ts.control_input.addEventListener('input', syncItemVisibility);
+            ts.on('type', syncItemVisibility);
+            ts.on('blur', function () {
+                ts.control.querySelectorAll('.item').forEach(function (el) { el.style.display = ''; });
+            });
+            ts.on('change', function () {
+                ts.control.querySelectorAll('.item').forEach(function (el) { el.style.display = ''; });
+            });
+            ts.on('clear', function () {
+                ts.control.querySelectorAll('.item').forEach(function (el) { el.style.display = ''; });
             });
         });
     }
