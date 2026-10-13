@@ -42,13 +42,17 @@ $this->assign('title', 'Registrar Tienda');
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label" for="telefono">Teléfono de Contacto</label>
-                        <?= $this->Form->control('telefono', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'placeholder' => '+52 55 1234 5678',
-                            'maxlength' => 20,
-                        ]) ?>
+                        <label class="form-label" for="telefono">Teléfono de Contacto (Guatemala +502)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted fw-semibold"><i class="bi bi-telephone me-1"></i>+502</span>
+                            <?= $this->Form->control('telefono', [
+                                'label' => false,
+                                'class' => 'form-control',
+                                'placeholder' => '2234 5678',
+                                'maxlength' => 20,
+                            ]) ?>
+                        </div>
+                        <div class="form-text">Ingrese los 8 dígitos telefónicos de Guatemala (ej. 2234 5678 o 5123 4567).</div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">

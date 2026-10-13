@@ -90,7 +90,7 @@ class EmpleadosTable extends Table
         $validator
             ->allowEmptyFile('fotografia_file')
             ->add('fotografia_file', 'fileType', [
-                'rule' => ['mimeType', ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']],
+                'rule' => ['extension', ['jpg', 'jpeg', 'png', 'webp']],
                 'message' => 'Solo se permiten imágenes en formato JPG, PNG o WEBP.',
             ])
             ->add('fotografia_file', 'fileSize', [

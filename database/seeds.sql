@@ -5,16 +5,16 @@
 
 -- 1. Inserción de Tiendas
 INSERT INTO tiendas (id, nombre, direccion, telefono) 
-VALUES (1, 'Sterenfix Matriz Centro', 'Av. Juárez 1050, Centro Histórico, CDMX', '+52 55 5123 4567');
+VALUES (1, 'Sterenfix Matriz Centro', 'Av. Juárez 1050, Centro Histórico, CDMX', '+502 2234 5678');
 
 INSERT INTO tiendas (id, nombre, direccion, telefono) 
-VALUES (2, 'Sterenfix Plaza Galerías', 'Blvd. Manuel Ávila Camacho 200, Naucalpan, Edo. Méx.', '+52 55 5987 6543');
+VALUES (2, 'Sterenfix Plaza Galerías', 'Blvd. Manuel Ávila Camacho 200, Naucalpan, Edo. Méx.', '+502 2345 6789');
 
 INSERT INTO tiendas (id, nombre, direccion, telefono) 
-VALUES (3, 'Sterenfix Centro Sur', 'Calzada del Hueso 519, Coyoacán, CDMX', '+52 55 5432 1098');
+VALUES (3, 'Sterenfix Centro Sur', 'Calzada del Hueso 519, Coyoacán, CDMX', '+502 2456 7890');
 
 INSERT INTO tiendas (id, nombre, direccion, telefono) 
-VALUES (4, 'Sterenfix Parque Tecnológico', 'Av. Universidad Tecnológica 401, Querétaro, Qro.', '+52 44 2345 6789');
+VALUES (4, 'Sterenfix Parque Tecnológico', 'Av. Universidad Tecnológica 401, Querétaro, Qro.', '+502 7765 4321');
 
 -- 2. Inserción de Puestos
 INSERT INTO puestos (id, nombre, descripcion) 

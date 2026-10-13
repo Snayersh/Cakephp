@@ -81,21 +81,26 @@ class EmpleadosController extends AppController
         $empleado = $this->Empleados->newEmptyEntity();
         if ($this->getRequest()->is('post')) {
             $data = $this->getRequest()->getData();
-
-            // Procesar subida de archivo fotográfico
             $archivoFoto = $this->getRequest()->getData('fotografia_file');
-            if ($archivoFoto instanceof UploadedFile && $archivoFoto->getError() === UPLOAD_ERR_OK) {
-                $filename = $this->procesarFotografia($archivoFoto);
-                if ($filename) {
-                    $data['fotografia'] = $filename;
+
+            // 1. Validar la entidad con los datos del formulario antes de mover el archivo temporal
+            $empleado = $this->Empleados->patchEntity($empleado, $data);
+
+            if (empty($empleado->getErrors())) {
+                // 2. Si la validación es exitosa, procesar y almacenar la fotografía
+                if ($archivoFoto instanceof UploadedFile && $archivoFoto->getError() === UPLOAD_ERR_OK) {
+                    $filename = $this->procesarFotografia($archivoFoto);
+                    if ($filename) {
+                        $empleado->fotografia = $filename;
+                    }
+                }
+
+                if ($this->Empleados->save($empleado)) {
+                    $this->Flash->success(__('El empleado "{0}" ha sido registrado correctamente.', $empleado->nombre_completo));
+                    return $this->redirect(['action' => 'view', $empleado->id]);
                 }
             }
 
-            $empleado = $this->Empleados->patchEntity($empleado, $data);
-            if ($this->Empleados->save($empleado)) {
-                $this->Flash->success(__('El empleado "{0}" ha sido registrado correctamente.', $empleado->nombre_completo));
-                return $this->redirect(['action' => 'view', $empleado->id]);
-            }
             $this->Flash->error(__('No se pudo registrar al empleado. Revise los campos marcados en rojo.'));
         }
 
@@ -113,28 +118,33 @@ class EmpleadosController extends AppController
         if ($this->getRequest()->is(['patch', 'post', 'put'])) {
             $data = $this->getRequest()->getData();
             $fotoAnterior = $empleado->fotografia;
-
-            // Procesar nueva fotografía si fue cargada
             $archivoFoto = $this->getRequest()->getData('fotografia_file');
-            if ($archivoFoto instanceof UploadedFile && $archivoFoto->getError() === UPLOAD_ERR_OK) {
-                $filename = $this->procesarFotografia($archivoFoto);
-                if ($filename) {
-                    $data['fotografia'] = $filename;
-                    // Eliminar foto anterior si no es de los seeds precargados
-                    if (!empty($fotoAnterior) && !preg_match('/^emp\d+\.jpg$/', $fotoAnterior)) {
-                        $antiguoPath = WWW_ROOT . 'img' . DS . 'empleados' . DS . $fotoAnterior;
-                        if (file_exists($antiguoPath)) {
-                            @unlink($antiguoPath);
+
+            // 1. Validar los datos del formulario
+            $empleado = $this->Empleados->patchEntity($empleado, $data);
+
+            if (empty($empleado->getErrors())) {
+                // 2. Si la validación es correcta y se subió nueva fotografía, procesarla
+                if ($archivoFoto instanceof UploadedFile && $archivoFoto->getError() === UPLOAD_ERR_OK) {
+                    $filename = $this->procesarFotografia($archivoFoto);
+                    if ($filename) {
+                        $empleado->fotografia = $filename;
+                        // Eliminar foto anterior si no es de los fixtures precargados
+                        if (!empty($fotoAnterior) && !preg_match('/^emp\d+\.jpg$/', $fotoAnterior)) {
+                            $antiguoPath = WWW_ROOT . 'img' . DS . 'empleados' . DS . $fotoAnterior;
+                            if (file_exists($antiguoPath)) {
+                                @unlink($antiguoPath);
+                            }
                         }
                     }
                 }
+
+                if ($this->Empleados->save($empleado)) {
+                    $this->Flash->success(__('El expediente del empleado "{0}" fue actualizado con éxito.', $empleado->nombre_completo));
+                    return $this->redirect(['action' => 'view', $empleado->id]);
+                }
             }
 
-            $empleado = $this->Empleados->patchEntity($empleado, $data);
-            if ($this->Empleados->save($empleado)) {
-                $this->Flash->success(__('El expediente del empleado "{0}" fue actualizado con éxito.', $empleado->nombre_completo));
-                return $this->redirect(['action' => 'view', $empleado->id]);
-            }
             $this->Flash->error(__('No se pudo guardar la información. Por favor verifique el formulario.'));
         }
 
@@ -173,7 +183,7 @@ class EmpleadosController extends AppController
         $extension = strtolower(pathinfo($file->getClientFilename() ?? '', PATHINFO_EXTENSION));
         $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
 
-        if (!in_array($extension, $permitidas)) {
+        if (!in_array($extension, $permitidas, true)) {
             return null;
         }
 

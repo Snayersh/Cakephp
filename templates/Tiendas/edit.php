@@ -39,12 +39,17 @@ $this->assign('title', 'Editar Tienda');
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label" for="telefono">Teléfono</label>
-                        <?= $this->Form->control('telefono', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'maxlength' => 20,
-                        ]) ?>
+                        <label class="form-label" for="telefono">Teléfono (Guatemala +502)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted fw-semibold"><i class="bi bi-telephone me-1"></i>+502</span>
+                            <?= $this->Form->control('telefono', [
+                                'label' => false,
+                                'class' => 'form-control',
+                                'placeholder' => '2234 5678',
+                                'maxlength' => 20,
+                            ]) ?>
+                        </div>
+                        <div class="form-text">8 dígitos de Guatemala (formato +502).</div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">

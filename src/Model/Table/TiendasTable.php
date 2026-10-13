@@ -45,8 +45,21 @@ class TiendasTable extends Table
 
         $validator
             ->scalar('telefono')
-            ->maxLength('telefono', 20, 'El teléfono no puede exceder 20 caracteres.')
-            ->allowEmptyString('telefono');
+            ->maxLength('telefono', 25, 'El teléfono no puede exceder 25 caracteres.')
+            ->allowEmptyString('telefono')
+            ->add('telefono', 'guatemalaPhone', [
+                'rule' => function ($value, $context) {
+                    if ($value === null || trim((string)$value) === '') {
+                        return true;
+                    }
+                    $digits = preg_replace('/\D/', '', (string)$value);
+                    if (str_starts_with($digits, '502') && strlen($digits) === 11) {
+                        $digits = substr($digits, 3);
+                    }
+                    return strlen($digits) === 8;
+                },
+                'message' => 'El número de teléfono debe constar de 8 dígitos (formato de Guatemala +502 XXXX XXXX).'
+            ]);
 
         return $validator;
     }
