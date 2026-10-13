@@ -96,8 +96,8 @@
         <div class="d-flex align-items-center">
             <div class="oracle-status-pill rounded-circle bg-success me-2 pulse-dot"></div>
             <div class="text-truncate">
-                <div class="fs-xs text-white-50">Base de Datos</div>
-                <div class="fs-xs fw-semibold text-white">Oracle Database Free</div>
+                <div class="fs-xs text-white-50">Sterenfix RH</div>
+                <div class="fs-xs fw-semibold text-white">Sistema En Línea</div>
             </div>
         </div>
     </div>

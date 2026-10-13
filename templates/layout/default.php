@@ -52,7 +52,7 @@
                         <strong>Sterenfix</strong> &copy; <?= date('Y') ?> - Sistema de Gestión de Personal. Todos los derechos reservados.
                     </div>
                     <div class="mt-2 mt-sm-0">
-                        <span class="badge bg-light text-secondary border me-1"><i class="fa-solid fa-server me-1"></i>Oracle Database 23c/Free</span>
+                        
                         <span class="badge bg-light text-secondary border"><i class="fa-brands fa-php me-1"></i>CakePHP MVC</span>
                     </div>
                 </div>

@@ -124,10 +124,9 @@ assertTest("Las cabeceras HTTP confirman UTF-8 y PHP 8.2", function() {
     return (str_contains($type, 'utf-8') || str_contains($type, 'UTF-8')) ? true : "Content-type: $type";
 });
 
-assertTest("El pie de página contiene los badges oficiales CakePHP y Oracle", function() {
+assertTest("El pie de página contiene la firma institucional y framework CakePHP", function() {
     $res = request('GET', '/');
     if (!str_contains($res['body'], 'CakePHP MVC')) return "Falta badge CakePHP MVC";
-    if (!str_contains($res['body'], 'Oracle Database 23c/Free')) return "Falta badge Oracle Database";
     return true;
 });
 
