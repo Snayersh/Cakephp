@@ -67,7 +67,7 @@ class EmpleadosTable extends Table
             ->notEmptyDate('fecha_nacimiento', 'Debe seleccionar la fecha de nacimiento.');
 
         $validator
-            ->decimal('salario', 2, 'El salario debe ser una cantidad numérica válida con hasta dos decimales.')
+            ->numeric('salario', 'El salario debe ser una cantidad numérica válida.')
             ->requirePresence('salario', 'create', 'El salario es obligatorio.')
             ->notEmptyString('salario', 'El salario es requerido.')
             ->greaterThan('salario', 0, 'El salario debe ser estrictamente mayor a 0.00.');

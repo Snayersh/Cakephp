@@ -37,14 +37,14 @@ $this->assign('title', 'Detalle de Tienda: ' . $tienda->nombre);
     <div class="col-12 col-md-4">
         <div class="card p-3 border-0 shadow-sm">
             <div class="fs-xs text-muted text-uppercase fw-semibold">Subtotal Nómina Mensual</div>
-            <h3 class="fw-bold mb-0 text-success">$<?= number_format($subtotalNomina, 2) ?></h3>
+            <h3 class="fw-bold mb-0 text-success">Q <?= number_format($subtotalNomina, 2) ?></h3>
         </div>
     </div>
     <div class="col-12 col-md-4">
         <div class="card p-3 border-0 shadow-sm">
             <div class="fs-xs text-muted text-uppercase fw-semibold">Salario Promedio</div>
             <h3 class="fw-bold mb-0 text-info">
-                $<?= number_format(count($tienda->empleados ?? []) > 0 ? ($subtotalNomina / count($tienda->empleados)) : 0, 2) ?>
+                Q <?= number_format(count($tienda->empleados ?? []) > 0 ? ($subtotalNomina / count($tienda->empleados)) : 0, 2) ?>
             </h3>
         </div>
     </div>

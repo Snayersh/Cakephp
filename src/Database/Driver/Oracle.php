@@ -63,6 +63,9 @@ class Oracle extends Driver
         $this->setConnection($connection);
 
         // Formatos de fecha y timestamp de sesión
+        $connection->exec("ALTER SESSION SET NLS_LANGUAGE = 'SPANISH'");
+        $connection->exec("ALTER SESSION SET NLS_TERRITORY = 'GUATEMALA'");
+        $connection->exec("ALTER SESSION SET NLS_NUMERIC_CHARACTERS = '.,'");
         $connection->exec("ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD'");
         $connection->exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT = 'YYYY-MM-DD HH24:MI:SS'");
 
@@ -84,9 +87,10 @@ class Oracle extends Driver
         $this->connect();
         $isObject = $query instanceof Query;
         $sql = $isObject ? $query->sql() : (string)$query;
+        $isSelect = (bool)preg_match('/^\s*(?:WITH|SELECT)/i', $sql);
 
         $aliasMap = [];
-        if (preg_match_all('/AS\s+([a-zA-Z0-9_]+)/i', $sql, $matches)) {
+        if ($isSelect && preg_match_all('/AS\s+([a-zA-Z0-9_]+)/i', $sql, $matches)) {
             foreach ($matches[1] as $alias) {
                 $aliasMap[strtolower($alias)] = $alias;
             }
@@ -94,9 +98,10 @@ class Oracle extends Driver
 
         $statement = $this->_connection->prepare($sql);
         $pdoStatement = new PDOStatement($statement, $this);
-        $result = new OracleStatement($pdoStatement, $this, $aliasMap);
+        $result = new OracleStatement($pdoStatement, $this, $aliasMap, $sql);
 
-        if ($isObject && $query->isBufferedResultsEnabled() === false) {
+        // Solo almacenar en búfer consultas de tipo SELECT
+        if (!$isSelect || ($isObject && $query->isBufferedResultsEnabled() === false)) {
             $result->bufferResults(false);
         }
 
@@ -132,7 +137,24 @@ class Oracle extends Driver
 
     public function lastInsertId(?string $table = null, ?string $column = null): string|int
     {
-        return (int)$this->getConnection()->lastInsertId();
+        if ($table !== null) {
+            $col = $column ?: 'id';
+            $uTable = strtoupper($table);
+            $uCol = strtoupper($col);
+            try {
+                $stmt = $this->getConnection()->query("SELECT NVL(MAX({$uCol}), 0) FROM {$uTable}");
+                if ($stmt) {
+                    $val = $stmt->fetchColumn();
+                    if ($val !== false) {
+                        return (int)$val;
+                    }
+                }
+            } catch (\Throwable) {
+                return 0;
+            }
+        }
+
+        return 0;
     }
 
     public function disableForeignKeySQL(): string

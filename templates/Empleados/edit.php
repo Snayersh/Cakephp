@@ -58,9 +58,9 @@ $this->assign('title', 'Editar Empleado: ' . $empleado->nombre_completo);
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="salario">Salario Mensual Bruto (MXN) <span class="text-danger">*</span></label>
+                            <label class="form-label" for="salario">Salario Mensual Bruto (GTQ - Quetzales) <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light text-muted">$</span>
+                                <span class="input-group-text bg-light text-muted">Q</span>
                                 <?= $this->Form->control('salario', [
                                     'type' => 'number',
                                     'step' => '0.01',

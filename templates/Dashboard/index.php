@@ -62,9 +62,9 @@ $this->assign('title', 'Tablero Ejecutivo');
             <div class="d-flex align-items-center justify-content-between">
                 <div>
                     <span class="text-muted fs-xs fw-semibold text-uppercase">Nómina Total (Salarios)</span>
-                    <h3 class="fw-bold mb-0 text-success">$<?= number_format($totalNomina, 2) ?></h3>
+                    <h3 class="fw-bold mb-0 text-success">Q <?= number_format($totalNomina, 2) ?></h3>
                     <div class="fs-xs text-muted mt-1">
-                        <i class="bi bi-calculator me-1"></i>Promedio: $<?= number_format($promedioSalario, 2) ?>
+                        <i class="bi bi-calculator me-1"></i>Promedio: Q <?= number_format($promedioSalario, 2) ?>
                     </div>
                 </div>
                 <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success">
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function () {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Presupuesto de Nómina ($)',
+                    label: 'Presupuesto de Nómina (Q - Quetzales)',
                     data: dataNomina,
                     backgroundColor: [
                         'rgba(37, 99, 235, 0.85)',

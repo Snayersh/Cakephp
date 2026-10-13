@@ -36,7 +36,7 @@ $this->assign('title', 'Reporte General de Empleados y Nómina');
     <div class="col-12 col-sm-6 col-lg-4">
         <div class="card p-3 border-0 shadow-sm bg-primary bg-gradient text-white" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);">
             <span class="fs-xs text-uppercase opacity-75 fw-semibold">Totalización General de Salarios</span>
-            <h2 class="fw-bold mb-0 text-white">$<?= number_format($totalSalarios, 2) ?> <span class="fs-6 fw-normal">MXN</span></h2>
+            <h2 class="fw-bold mb-0 text-white">Q <?= number_format($totalSalarios, 2) ?> <span class="fs-6 fw-normal">GTQ</span></h2>
             <div class="fs-xs opacity-75 mt-1">Presupuesto mensual consolidado</div>
         </div>
     </div>
@@ -50,7 +50,7 @@ $this->assign('title', 'Reporte General de Empleados y Nómina');
     <div class="col-12 col-sm-6 col-lg-4">
         <div class="card p-3 border-0 shadow-sm">
             <span class="fs-xs text-muted text-uppercase fw-semibold">Salario Promedio Individual</span>
-            <h2 class="fw-bold mb-0 text-success">$<?= number_format($promedioSalario, 2) ?> <span class="fs-6 fw-normal text-muted">MXN</span></h2>
+            <h2 class="fw-bold mb-0 text-success">Q <?= number_format($promedioSalario, 2) ?> <span class="fs-6 fw-normal text-muted">GTQ</span></h2>
             <div class="fs-xs text-muted mt-1">Media salarial por empleado</div>
         </div>
     </div>
@@ -107,7 +107,7 @@ $this->assign('title', 'Reporte General de Empleados y Nómina');
                         <th>Edad</th>
                         <th>Puesto</th>
                         <th>Tienda / Sucursal</th>
-                        <th class="text-end pe-4">Salario (MXN)</th>
+                        <th class="text-end pe-4">Salario (GTQ)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -163,7 +163,7 @@ $this->assign('title', 'Reporte General de Empleados y Nómina');
                             <i class="bi bi-calculator me-1"></i> Totalización General de Salarios (<?= count($empleados) ?> Empleados):
                         </td>
                         <td class="text-end pe-4 text-success fs-5 py-3">
-                            $<?= number_format($totalSalarios, 2) ?>
+                            Q <?= number_format($totalSalarios, 2) ?>
                         </td>
                     </tr>
                 </tfoot>

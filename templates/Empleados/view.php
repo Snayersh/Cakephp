@@ -96,7 +96,7 @@ $this->assign('title', 'Perfil 360°: ' . $empleado->nombre_completo);
         <div class="vr opacity-25"></div>
         <div class="px-3 py-1">
             <span class="fs-xs text-muted d-block text-uppercase fw-semibold">Salario Anual Proyectado</span>
-            <span class="fs-5 fw-bold text-dark">$<?= number_format((float)$empleado->salario * 12, 2) ?></span>
+            <span class="fs-5 fw-bold text-dark">Q <?= number_format((float)$empleado->salario * 12, 2) ?></span>
         </div>
     </div>
 </div>
@@ -177,10 +177,10 @@ $this->assign('title', 'Perfil 360°: ' . $empleado->nombre_completo);
                                 <dd class="col-sm-7 text-secondary"><?= h($empleado->tienda->direccion ?: 'N/A') ?></dd>
 
                                 <dt class="col-sm-5 text-muted">Salario Mensual:</dt>
-                                <dd class="col-sm-7 fw-bold text-success fs-6"><?= $empleado->salario_formateado ?> MXN</dd>
+                                <dd class="col-sm-7 fw-bold text-success fs-6"><?= $empleado->salario_formateado ?> GTQ</dd>
 
                                 <dt class="col-sm-5 text-muted">Salario Quincenal:</dt>
-                                <dd class="col-sm-7 text-dark">$<?= number_format((float)$empleado->salario / 2, 2) ?> MXN</dd>
+                                <dd class="col-sm-7 text-dark">Q <?= number_format((float)$empleado->salario / 2, 2) ?> GTQ</dd>
                             </dl>
                         </div>
                     </div>

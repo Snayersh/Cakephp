@@ -34,7 +34,7 @@ $this->assign('title', 'Reporte de Salarios por Tienda');
     <div class="row align-items-center">
         <div class="col-12 col-md-6 mb-3 mb-md-0">
             <span class="fs-xs text-uppercase opacity-75 fw-semibold d-block">Presupuesto Consolidado de Nómina</span>
-            <h1 class="display-6 fw-bold mb-0 text-white">$<?= number_format($granTotalSalarios, 2) ?> <span class="fs-6 opacity-75">MXN</span></h1>
+            <h1 class="display-6 fw-bold mb-0 text-white">Q <?= number_format($granTotalSalarios, 2) ?> <span class="fs-6 opacity-75">GTQ</span></h1>
             <div class="fs-xs opacity-75 mt-1">Suma acumulada de todas las tiendas de la cadena Sterenfix</div>
         </div>
         <div class="col-12 col-md-6 text-md-end">
@@ -52,7 +52,7 @@ $this->assign('title', 'Reporte de Salarios por Tienda');
                 <div>
                     <span class="fs-xs text-uppercase opacity-75 d-block">Salario Promedio Global</span>
                     <span class="fs-4 fw-bold">
-                        $<?= number_format($totalEmpleadosGlobal > 0 ? ($granTotalSalarios / $totalEmpleadosGlobal) : 0, 2) ?>
+                        Q <?= number_format($totalEmpleadosGlobal > 0 ? ($granTotalSalarios / $totalEmpleadosGlobal) : 0, 2) ?>
                     </span>
                 </div>
             </div>
@@ -88,7 +88,7 @@ $this->assign('title', 'Reporte de Salarios por Tienda');
                     <i class="bi bi-people me-1"></i><?= $cantidad ?> empleados
                 </span>
                 <span class="badge bg-white text-success border border-success-subtle px-3 py-2 fs-xs fw-bold">
-                    <i class="bi bi-cash me-1"></i>Subtotal: $<?= number_format($subtotal, 2) ?>
+                    <i class="bi bi-cash me-1"></i>Subtotal: Q <?= number_format($subtotal, 2) ?>
                 </span>
                 <span class="badge bg-success-subtle text-success border border-success px-2 py-1 fs-xxs">
                     <?= number_format($porcentajeGlobal, 1) ?>% del total
@@ -152,7 +152,7 @@ $this->assign('title', 'Reporte de Salarios por Tienda');
                                 <i class="bi bi-calculator-fill me-1"></i> Subtotal de Salarios Sucursal (<?= h($tienda->nombre) ?>):
                             </td>
                             <td class="text-end pe-4 text-success fs-6 py-2">
-                                $<?= number_format($subtotal, 2) ?>
+                                Q <?= number_format($subtotal, 2) ?>
                             </td>
                         </tr>
                     </tfoot>

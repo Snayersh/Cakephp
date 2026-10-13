@@ -83,7 +83,7 @@ class Empleado extends Entity
      */
     protected function _getSalarioFormateado(): string
     {
-        return '$' . number_format((float)($this->salario ?? 0), 2, '.', ',');
+        return 'Q ' . number_format((float)($this->salario ?? 0), 2, '.', ',');
     }
 
     /**
