@@ -13,6 +13,52 @@ Sistema web integral de administración de capital humano, kárdex laboral 360°
 
 ---
 
+## ⚡ Inicio Rápido (Cómo Iniciar el Proyecto)
+
+Sigue estos pasos para levantar y ejecutar el proyecto localmente de forma inmediata:
+
+### 1. Clonar el Repositorio
+```bash
+git clone https://github.com/Snayersh/Cakephp.git
+cd Cakephp
+```
+
+### 2. Configurar el Archivo de Entorno
+```bash
+cp .env.example .env
+```
+
+### 3. Iniciar los Contenedores
+Ejecuta el comando correspondiente según el gestor de contenedores de tu preferencia:
+
+* **Con Podman (Linux Fedora / RHEL):**
+  ```bash
+  podman-compose up -d --build
+  ```
+
+* **Con Docker:**
+  ```bash
+  docker compose up -d --build
+  ```
+
+> 💡 **Nota:** La base de datos Oracle Database 23c Free inicializa automáticamente el usuario, los esquemas, tablas e inserta los datos precargados (*seeds*) en el primer arranque.
+
+### 4. Acceder al Sistema en el Navegador
+Abre tu navegador web y visita:
+👉 **[http://localhost:8080](http://localhost:8080)**
+
+### 5. Comprobar Funcionamiento con Pruebas Automatizadas
+Para validar al instante que todos los módulos y la base de datos están 100% operativos:
+```bash
+# Con Podman
+podman exec -it sterenfix_web php tests/system_test_runner.php
+
+# Con Docker
+docker exec -it sterenfix_web php tests/system_test_runner.php
+```
+
+---
+
 ## 📐 Arquitectura de la Solución
 
 La aplicación está construida siguiendo los más rigurosos estándares de la industria bajo una arquitectura **MVC / N-Capas**:
