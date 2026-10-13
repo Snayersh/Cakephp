@@ -51,10 +51,10 @@ Abre tu navegador web y visita:
 Para validar al instante que todos los módulos y la base de datos están 100% operativos:
 ```bash
 # Con Podman
-podman exec -it sterenfix_web php tests/system_test_runner.php
+podman exec -it sterenfix_app php tests/system_test_runner.php
 
 # Con Docker
-docker exec -it sterenfix_web php tests/system_test_runner.php
+docker exec -it sterenfix_app php tests/system_test_runner.php
 ```
 
 ---
@@ -218,10 +218,10 @@ El proyecto incluye un ejecutor de pruebas automatizado de extremo a extremo (E2
 
 ```bash
 # Ejecutar con Podman
-podman exec -it sterenfix_web php tests/system_test_runner.php
+podman exec -it sterenfix_app php tests/system_test_runner.php
 
 # O ejecutar con Docker
-docker exec -it sterenfix_web php tests/system_test_runner.php
+docker exec -it sterenfix_app php tests/system_test_runner.php
 ```
 
 ### Cobertura de las 31 Pruebas Automatizadas (31/31 PASS):
@@ -311,11 +311,6 @@ El sistema utiliza la capa nativa oficial `Cake\Database\Driver\Mysql` para una 
 │   └── entrypoint.sh                # Script de arranque y permisos para el contenedor
 ├── src/                             # Código fuente PHP
 │   ├── Controller/                  # Controladores delgados (Dashboard, Empleados, Reportes...)
-│   ├── Database/                    # Driver y compilador nativo de Oracle Database 23c
-│   │   ├── Driver/Oracle.php        # Driver PDO OCI personalizado
-│   │   ├── OracleCompiler.php       # Compilador SQL con soporte OFFSET/FETCH y NLS
-│   │   └── Statement/
-│   │       └── OracleStatement.php  # Decorador de cursor y buffer OCI
 │   ├── Model/
 │   │   ├── Entity/                  # Entidades de dominio con propiedades virtuales (Quetzales, edad)
 │   │   └── Table/                   # Modelos Table con validaciones y reglas de negocio
