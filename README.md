@@ -2,7 +2,7 @@
 
 [![CakePHP](https://img.shields.io/badge/CakePHP-4.5-red.svg?logo=cakephp&style=for-the-badge)](https://cakephp.org)
 [![PHP](https://img.shields.io/badge/PHP-8.2-777BB4.svg?logo=php&style=for-the-badge)](https://www.php.net/)
-[![Oracle Database](https://img.shields.io/badge/Oracle_Database-23c%20Free-F80000.svg?logo=oracle&style=for-the-badge)](https://www.oracle.com/database/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1.svg?logo=mysql&style=for-the-badge)](https://www.mysql.com/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?logo=docker&style=for-the-badge)](https://www.docker.com/)
 [![Podman](https://img.shields.io/badge/Podman-Compatible-892CA0.svg?logo=podman&style=for-the-badge)](https://podman.io/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3.svg?logo=bootstrap&style=for-the-badge)](https://getbootstrap.com/)
@@ -41,7 +41,7 @@ Ejecuta el comando correspondiente según el gestor de contenedores de tu prefer
   docker compose up -d --build
   ```
 
-> 💡 **Nota:** La base de datos Oracle Database 23c Free inicializa automáticamente el usuario, los esquemas, tablas e inserta los datos precargados (*seeds*) en el primer arranque.
+> 💡 **Nota:** La base de datos MySQL 8.0 inicializa automáticamente el usuario, los esquemas, tablas e inserta los datos precargados (*seeds*) en el primer arranque.
 
 ### 4. Acceder al Sistema en el Navegador
 Abre tu navegador web y visita:
@@ -66,8 +66,8 @@ La aplicación está construida siguiendo los más rigurosos estándares de la i
 * **Capa de Presentación (View & Templates):** Vistas modulares y responsivas desarrolladas con Bootstrap 5.3, iconografía de Bootstrap Icons y FontAwesome 6, interactividad moderna con **Tom Select** (autocompletado y búsqueda en vivo en dropdowns), alertas y diálogos de confirmación mediante **SweetAlert2** y visualizador fotográfico modal.
 * **Capa de Controladores (Thin Controllers):** Controladores delgados encargados estrictamente del flujo HTTP, validación de peticiones, subida segura de fotografías y coordinación con los modelos.
 * **Capa de Modelo y Negocio (Fat Models / Table & Entity):** Reglas de negocio encapsuladas en `Table` (validaciones de tipos MIME, restricciones monetarias en **Quetzales** con `salario > 0`, verificación de teléfonos de Guatemala de 8 dígitos con prefijo `+502`, límites de fechas y verificación de integridad referencial mediante `buildRules`) y entidades con propiedades virtuales (`nombre_completo`, `edad` calculada en tiempo de ejecución, `salario_formateado` en `Q`, `fotografia_url`).
-* **Capa de Base de Datos & Driver OCI:** Motor relacional empresarial **Oracle Database 23c / Free** (PDB `FREEPDB1`), empleando identificadores autoincrementales nativos (`IDENTITY`), restricciones de integridad referencial (`FOREIGN KEY ON DELETE CASCADE`), llaves únicas y disparadores de auditoría temporal (`TIMESTAMP`). Incorpora un **Driver Nativo de Oracle para CakePHP 4.5** personalizado para sincronización de secuencias, paginación ANSI y codificación UTF-8.
-* **Capa de Contenedores:** Aislamiento total mediante **Docker / Podman** y **Docker Compose**, con imagen basada en `php:8.2-apache` compilada con Oracle Instant Client 21.x (`oci8` y `pdo_oci`) y extensiones PHP esenciales (`intl`, `mbstring`, `gd`, `zip`).
+* **Capa de Base de Datos:** Motor relacional empresarial **MySQL 8.0**, empleando identificadores autoincrementales nativos (`AUTO_INCREMENT`), restricciones de integridad referencial (`FOREIGN KEY ON DELETE CASCADE`), llaves únicas, codificación completa `utf8mb4` y el driver oficial nativo `Cake\Database\Driver\Mysql`.
+* **Capa de Contenedores:** Aislamiento total mediante **Docker / Podman** y **Docker Compose**, con imagen basada en `php:8.2-apache` compilada con soporte de `pdo_mysql` y extensiones PHP esenciales (`intl`, `mbstring`, `gd`, `zip`).
 
 ---
 
@@ -85,7 +85,7 @@ La aplicación está construida siguiendo los más rigurosos estándares de la i
 
 ---
 
-## 🗄️ Modelo de Datos en Oracle Database
+## 🗄️ Modelo de Datos en MySQL 8.0
 
 El esquema relacional incluye 5 tablas principales optimizadas con índices y restricciones:
 
@@ -97,7 +97,7 @@ erDiagram
     EMPLEADOS ||--o{ LLAMADAS_ATENCION : "registra faltas"
 
     TIENDAS {
-        NUMBER id PK "IDENTITY"
+        NUMBER id PK "AUTO_INCREMENT"
         VARCHAR2 nombre "UNIQUE, NOT NULL"
         VARCHAR2 direccion
         VARCHAR2 telefono "Formato +502"
@@ -105,14 +105,14 @@ erDiagram
     }
 
     PUESTOS {
-        NUMBER id PK "IDENTITY"
+        NUMBER id PK "AUTO_INCREMENT"
         VARCHAR2 nombre "UNIQUE, NOT NULL"
         VARCHAR2 descripcion
         TIMESTAMP creado_en
     }
 
     EMPLEADOS {
-        NUMBER id PK "IDENTITY"
+        NUMBER id PK "AUTO_INCREMENT"
         VARCHAR2 nombres "NOT NULL"
         VARCHAR2 apellidos "NOT NULL"
         DATE fecha_nacimiento "NOT NULL, >= 18 años"
@@ -124,7 +124,7 @@ erDiagram
     }
 
     LOGROS {
-        NUMBER id PK "IDENTITY"
+        NUMBER id PK "AUTO_INCREMENT"
         NUMBER empleado_id FK
         VARCHAR2 descripcion "NOT NULL"
         VARCHAR2 tipo "CHECK: positivo, negativo"
@@ -133,7 +133,7 @@ erDiagram
     }
 
     LLAMADAS_ATENCION {
-        NUMBER id PK "IDENTITY"
+        NUMBER id PK "AUTO_INCREMENT"
         NUMBER empleado_id FK
         VARCHAR2 descripcion "NOT NULL"
         DATE fecha_ocurrencia "NOT NULL, <= hoy"
@@ -168,7 +168,7 @@ cp .env.example .env
 ```
 
 ### 3. Levantar los Contenedores con Docker Compose
-Inicie la base de datos Oracle y el servidor web Apache + PHP 8.2 en segundo plano:
+Inicie la base de datos MySQL y el servidor web Apache + PHP 8.2 en segundo plano:
 ```bash
 # Con Docker Compose
 docker compose up -d --build
@@ -178,15 +178,15 @@ podman-compose up -d --build
 ```
 
 ### 4. Inicialización Automática de Base de Datos y Seeds
-El contenedor de Oracle inicializa automáticamente el usuario, permisos, tablas e inserta los datos precargados (`seeds.sql`) mediante el volumen montado en `/docker-entrypoint-initdb.d/setup/01_init.sql`.
+El contenedor de MySQL (`sterenfix_db`) inicializa automáticamente la base de datos, tablas e inserta los datos precargados (`seeds.sql`) mediante los scripts montados en `/docker-entrypoint-initdb.d/`.
 
-Si desea reaplicar manualmente los scripts dentro del contenedor de Oracle en cualquier momento, puede ejecutar:
+Si desea reaplicar manualmente los scripts dentro del contenedor de MySQL en cualquier momento, puede ejecutar:
 ```bash
-# Con Docker
-docker exec -i oracle-db sqlplus sys/SterenfixPassword123#@//localhost:1521/FREEPDB1 as sysdba < database/init.sql
-
 # Con Podman
-podman exec -i oracle-db sqlplus sys/SterenfixPassword123#@//localhost:1521/FREEPDB1 as sysdba < database/init.sql
+podman exec -i sterenfix_db mysql -u root -pSterenfixRootPassword123# sterenfix < database/init.sql
+
+# Con Docker
+docker exec -i sterenfix_db mysql -u root -pSterenfixRootPassword123# sterenfix < database/init.sql
 ```
 
 ### 5. Acceder a la Aplicación
@@ -202,13 +202,13 @@ http://localhost:8080
 | Parámetro | Valor por Defecto |
 | :--- | :--- |
 | **URL del Sistema** | `http://localhost:8080` |
-| **Motor de Base de Datos** | Oracle Database Free 23c / 19c |
-| **Host Interno DB** | `oracle-db` / `sterenfix_db` (o `localhost` en puerto `1521`) |
-| **Puerto DB** | `1521` |
-| **Pluggable Database (PDB)** | `FREEPDB1` |
+| **Motor de Base de Datos** | MySQL 8.0 |
+| **Host Interno DB** | `db` / `sterenfix_db` (o `localhost` en puerto `3306`) |
+| **Puerto DB** | `3306` |
+| **Base de Datos** | `sterenfix` |
 | **Usuario DB de Aplicación** | `sterenfix` |
 | **Contraseña DB de Aplicación**| `SterenfixPassword123#` |
-| **Usuario Administrador SYS**| `SYS` / `SterenfixPassword123#` |
+| **Usuario Root DB**| `root` / `SterenfixRootPassword123#` |
 
 ---
 
@@ -227,7 +227,7 @@ docker exec -it sterenfix_web php tests/system_test_runner.php
 ### Cobertura de las 31 Pruebas Automatizadas (31/31 PASS):
 1. **Infraestructura:** Verificación de cabeceras HTTP 200, UTF-8 y versión PHP 8.2.
 2. **Dashboard y Moneda:** Despliegue de métricas salariales en Quetzales (`Q`), gráficos de nómina y widgets.
-3. **Módulo Tiendas (CRUD):** Creación, lectura, edición, validación de teléfono (+502) y borrado en Oracle.
+3. **Módulo Tiendas (CRUD):** Creación, lectura, edición, validación de teléfono (+502) y borrado en MySQL.
 4. **Módulo Puestos (CRUD):** Creación, consulta de detalle y eliminación.
 5. **Módulo Personal y Kárdex:** Validación de salarios positivos en Quetzales, rechazo de valores negativos, registro con foto, vistas 360° y cálculo de edad.
 6. **Logros y Llamadas de Atención:** Registro de méritos positivos/negativos y actas disciplinarias.
@@ -289,19 +289,12 @@ docker exec -it sterenfix_web php tests/system_test_runner.php
 
 ---
 
-## 🔧 Driver Nativo de Oracle Database para CakePHP 4.5
+## 🔧 Persistencia y Soporte Nativo MySQL para CakePHP 4.5
 
-Debido a que CakePHP 4.5 no incluye soporte nativo por defecto para Oracle Database 23c, se diseñó e implementó una capa arquitectónica personalizada de persistencia en `src/Database/`:
-
-* **`src/Database/Driver/Oracle.php`:**
-  - Conexión PDO OCI con configuración automática de variables de sesión Oracle NLS (`NLS_LANGUAGE=SPANISH`, `NLS_TERRITORY=GUATEMALA`, `NLS_NUMERIC_CHARACTERS='.,'`).
-  - Detección de identificadores autoincrementales (`IDENTITY`) y obtención de último ID insertado.
-* **`src/Database/OracleCompiler.php`:**
-  - Traducción de consultas CakePHP QueryBuilder a sintaxis compatible con Oracle 23c.
-  - Soporte de paginación moderna mediante cláusulas `OFFSET ... ROWS FETCH NEXT ... ROWS ONLY`.
-  - Tratamiento adecuado de comillas e identificadores de campos reservados.
-* **`src/Database/Statement/OracleStatement.php`:**
-  - Decorador de sentencias preparadas con buffer para sentencias no-SELECT, previniendo errores de cursor OCI durante operaciones de escritura e inserción.
+El sistema utiliza la capa nativa oficial `Cake\Database\Driver\Mysql` para una integración de máxima estabilidad, velocidad y rendimiento:
+* **Codificación Completa `utf8mb4`:** Tratamiento nativo de acentos, caracteres especiales y collation `utf8mb4_unicode_ci`.
+* **Identificadores y Llaves:** Soporte directo de secuencias `AUTO_INCREMENT`, llaves foráneas transaccionales InnoDB y borrado en cascada (`ON DELETE CASCADE`).
+* **Optimización Indexada:** Índices relacionales en llaves foráneas y fechas de incidencias para consultas de reportes inmediatas.
 
 ---
 
@@ -310,7 +303,7 @@ Debido a que CakePHP 4.5 no incluye soporte nativo por defecto para Oracle Datab
 ```text
 ├── bin/                             # Ejecutables de consola de CakePHP
 ├── config/                          # Configuración central (app.php, routes.php, bootstrap.php)
-├── database/                        # Scripts DDL y DML para Oracle Database
+├── database/                        # Scripts DDL y DML para MySQL 8.0
 │   ├── init.sql                     # Script de aprovisionamiento de usuario y esquema
 │   ├── schema.sql                   # Definición de tablas, restricciones e índices
 │   └── seeds.sql                    # Datos precargados realistas (tiendas, puestos, empleados)
@@ -350,7 +343,7 @@ Debido a que CakePHP 4.5 no incluye soporte nativo por defecto para Oracle Datab
 ├── .env.example                     # Plantilla de variables de entorno seguras
 ├── .gitignore                       # Reglas de exclusión para Git y CakePHP
 ├── docker-compose.yml               # Orquestación de servicios app y db
-├── Dockerfile                       # Definición de contenedor PHP 8.2 + Oracle Instant Client
+├── Dockerfile                       # Definición de contenedor PHP 8.2 + pdo_mysql
 ├── composer.json                    # Dependencias de paquetes PHP
 └── README.md                        # Documentación técnica integral
 ```

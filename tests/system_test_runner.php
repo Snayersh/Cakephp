@@ -1,7 +1,7 @@
 <?php
 /**
  * Suite de Pruebas Automatizadas de Extremo a Extremo (E2E)
- * Sistema de Gestión de Personal Sterenfix (CakePHP 4.5 + Oracle 23c Free)
+ * Sistema de Gestión de Personal Sterenfix (CakePHP 4.5 + MySQL 8.0)
  */
 
 declare(strict_types=1);
@@ -105,7 +105,7 @@ function assertTest(string $description, callable $testFn): void {
 }
 
 out("\n==================================================================", 'bold');
-out("   STERENFIX E2E AUTOMATED TEST RUNNER (CakePHP 4.5 + Oracle 23c) ", 'cyan');
+out("   STERENFIX E2E AUTOMATED TEST RUNNER (CakePHP 4.5 + MySQL 8.0) ", 'cyan');
 out("==================================================================", 'bold');
 
 // -------------------------------------------------------------
@@ -173,7 +173,7 @@ assertTest("GET /tiendas/add muestra el formulario de registro de tienda", funct
     return $res['status'] === 200 && str_contains($res['body'], 'Registrar Nueva Tienda') ? true : "Status {$res['status']}";
 });
 
-assertTest("POST /tiendas/add crea una nueva tienda con secuencia autoincremental en Oracle", function() use (&$createdTiendaId) {
+assertTest("POST /tiendas/add crea una nueva tienda con secuencia autoincremental en MySQL", function() use (&$createdTiendaId) {
     $storeName = "Tienda AutoTest " . uniqid();
     $res = request('POST', '/tiendas/add', [
         'nombre' => $storeName,
@@ -183,7 +183,7 @@ assertTest("POST /tiendas/add crea una nueva tienda con secuencia autoincrementa
     if ($res['status'] !== 302) return "Expected 302 redirect, got {$res['status']}";
     
     $store = TableRegistry::getTableLocator()->get('Tiendas')->find()->where(['nombre' => $storeName])->first();
-    if (!$store) return "La tienda no fue creada en Oracle";
+    if (!$store) return "La tienda no fue creada en MySQL";
     $createdTiendaId = (int)$store->id;
     return true;
 });
@@ -235,7 +235,7 @@ assertTest("POST /puestos/add crea un nuevo puesto de trabajo", function() use (
     ]);
     if ($res['status'] !== 302) return "Expected 302 redirect, got {$res['status']}";
     $puesto = TableRegistry::getTableLocator()->get('Puestos')->find()->where(['nombre' => $puestoName])->first();
-    if (!$puesto) return "El puesto no fue creado en Oracle";
+    if (!$puesto) return "El puesto no fue creado en MySQL";
     $createdPuestoId = (int)$puesto->id;
     return true;
 });
