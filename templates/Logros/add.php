@@ -60,6 +60,7 @@ $this->assign('title', 'Registrar Logro');
                             'label' => false,
                             'class' => 'form-control',
                             'required' => true,
+                            'max' => date('Y-m-d'),
                             'value' => date('Y-m-d'),
                         ]) ?>
                     </div>

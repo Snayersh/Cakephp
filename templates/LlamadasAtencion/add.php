@@ -45,6 +45,7 @@ $this->assign('title', 'Registrar Llamada de Atención');
                             'label' => false,
                             'class' => 'form-control',
                             'required' => true,
+                            'max' => date('Y-m-d'),
                             'value' => date('Y-m-d'),
                         ]) ?>
                     </div>

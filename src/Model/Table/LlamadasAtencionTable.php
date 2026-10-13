@@ -46,7 +46,20 @@ class LlamadasAtencionTable extends Table
         $validator
             ->date('fecha_ocurrencia', ['ymd', 'dmy'], 'Seleccione una fecha válida.')
             ->requirePresence('fecha_ocurrencia', 'create', 'La fecha de la falta es requerida.')
-            ->notEmptyDate('fecha_ocurrencia', 'Debe especificar la fecha de ocurrencia.');
+            ->notEmptyDate('fecha_ocurrencia', 'Debe especificar la fecha de ocurrencia.')
+            ->add('fecha_ocurrencia', 'noFutura', [
+                'rule' => function ($value, $context) {
+                    if (empty($value)) return true;
+                    try {
+                        $date = new \DateTime((string)$value);
+                        $today = new \DateTime('today');
+                        return $date <= $today;
+                    } catch (\Throwable) {
+                        return false;
+                    }
+                },
+                'message' => 'La fecha de la incidencia no puede ser una fecha futura.'
+            ]);
 
         return $validator;
     }

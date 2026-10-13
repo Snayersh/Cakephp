@@ -109,12 +109,12 @@ $totalConteo = $conteoPositivos + $conteoNegativos;
 
             <div class="col-6 col-md-2">
                 <label class="form-label fs-xs mb-1">Fecha Desde:</label>
-                <input type="date" name="fecha_desde" class="form-control form-control-sm" value="<?= h($fechaDesde) ?>">
+                <input type="date" name="fecha_desde" class="form-control form-control-sm" max="<?= date('Y-m-d') ?>" value="<?= h($fechaDesde) ?>">
             </div>
 
             <div class="col-6 col-md-2">
                 <label class="form-label fs-xs mb-1">Fecha Hasta:</label>
-                <input type="date" name="fecha_hasta" class="form-control form-control-sm" value="<?= h($fechaHasta) ?>">
+                <input type="date" name="fecha_hasta" class="form-control form-control-sm" max="<?= date('Y-m-d') ?>" value="<?= h($fechaHasta) ?>">
             </div>
 
             <div class="col-6 col-md-3 d-flex align-items-end gap-1 pt-3">

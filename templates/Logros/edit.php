@@ -52,6 +52,7 @@ $this->assign('title', 'Editar Logro');
                             'label' => false,
                             'class' => 'form-control',
                             'required' => true,
+                            'max' => date('Y-m-d'),
                             'value' => $logro->fecha_ocurrencia ? $logro->fecha_ocurrencia->format('Y-m-d') : '',
                         ]) ?>
                     </div>

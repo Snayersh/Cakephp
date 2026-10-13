@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css">
 
     <!-- Estilos Personalizados Sterenfix -->
+    <link rel="stylesheet" href="/css/tom-select.bootstrap5.min.css">
     <link rel="stylesheet" href="/css/app.css">
 
     <?= $this->fetch('meta') ?>
@@ -86,6 +87,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
     <!-- Script de Funcionalidades UI Sterenfix -->
+    <script src="/js/tom-select.complete.min.js"></script>
     <script src="/js/app.js"></script>
 
     <?= $this->fetch('script') ?>

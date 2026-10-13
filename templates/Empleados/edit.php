@@ -53,6 +53,7 @@ $this->assign('title', 'Editar Empleado: ' . $empleado->nombre_completo);
                                 'label' => false,
                                 'class' => 'form-control',
                                 'required' => true,
+                                'max' => date('Y-m-d', strtotime('-18 years')),
                                 'value' => $empleado->fecha_nacimiento ? $empleado->fecha_nacimiento->format('Y-m-d') : '',
                             ]) ?>
                         </div>

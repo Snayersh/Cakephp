@@ -64,7 +64,25 @@ class EmpleadosTable extends Table
         $validator
             ->date('fecha_nacimiento', ['ymd', 'dmy'], 'Proporcione una fecha de nacimiento válida.')
             ->requirePresence('fecha_nacimiento', 'create', 'La fecha de nacimiento es obligatoria.')
-            ->notEmptyDate('fecha_nacimiento', 'Debe seleccionar la fecha de nacimiento.');
+            ->notEmptyDate('fecha_nacimiento', 'Debe seleccionar la fecha de nacimiento.')
+            ->add('fecha_nacimiento', 'noFuturaMayorEdad', [
+                'rule' => function ($value, $context) {
+                    if (empty($value)) {
+                        return true;
+                    }
+                    try {
+                        $date = new \DateTime((string)$value);
+                        $today = new \DateTime('today');
+                        if ($date > $today) {
+                            return false;
+                        }
+                        return $today->diff($date)->y >= 18;
+                    } catch (\Throwable) {
+                        return false;
+                    }
+                },
+                'message' => 'La fecha de nacimiento no puede ser futura y el empleado debe tener al menos 18 años.'
+            ]);
 
         $validator
             ->numeric('salario', 'El salario debe ser una cantidad numérica válida.')

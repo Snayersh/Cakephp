@@ -1,8 +1,70 @@
 /**
  * SISTEMA STERENFIX - COMPONENTES INTERACTIVOS JS
  */
+
+// 1. Intercepción Global de Acciones de Eliminación con SweetAlert2 (Fase de Captura)
+// Debe registrarse de inmediato para interceptar los 'onclick' inline generados por postLink
+document.addEventListener('click', function (e) {
+    const deleteBtn = e.target.closest('a.btn-outline-danger, a.btn-danger, [data-confirm], form[action*="delete"] button, button[data-confirm]');
+    if (!deleteBtn) return;
+
+    // Prevenir el submit o redirección inmediata del botón
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    const confirmMessage = deleteBtn.getAttribute('data-confirm') ||
+                           deleteBtn.getAttribute('data-swal-confirm') ||
+                           deleteBtn.getAttribute('title') ||
+                           '¿Está seguro de que desea eliminar este registro? Esta acción no se puede deshacer.';
+
+    Swal.fire({
+        title: '¿Confirmar eliminación?',
+        text: confirmMessage,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="bi bi-trash-fill me-1"></i> Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        focusCancel: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Caso 1: Formulario postLink de CakePHP con submit por nombre inline (document.post_xyz.submit())
+            const onclickAttr = deleteBtn.getAttribute('onclick') || '';
+            const match = onclickAttr.match(/document\.([a-zA-Z0-9_]+)\.submit/);
+            if (match && match[1]) {
+                const targetForm = document.forms[match[1]] || document.querySelector(`form[name="${match[1]}"]`);
+                if (targetForm) {
+                    targetForm.submit();
+                    return;
+                }
+            }
+
+            // Caso 2: Formulario hermano inmediato anterior
+            const prevForm = deleteBtn.previousElementSibling;
+            if (prevForm && prevForm.tagName === 'FORM') {
+                prevForm.submit();
+                return;
+            }
+
+            // Caso 3: Dentro de un formulario
+            const parentForm = deleteBtn.closest('form');
+            if (parentForm) {
+                parentForm.submit();
+                return;
+            }
+
+            // Caso 4: Enlace tradicional
+            if (deleteBtn.href && !deleteBtn.href.startsWith('#') && !deleteBtn.href.startsWith('javascript:')) {
+                window.location.href = deleteBtn.href;
+            }
+        }
+    });
+}, true); // <- Fase de captura: se ejecuta antes de cualquier onclick inline
+
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Manejo del Sidebar en dispositivos móviles
+    // 2. Manejo del Sidebar en dispositivos móviles
     const sidebar = document.getElementById('mainSidebar');
     const toggleBtn = document.getElementById('sidebarToggleBtn');
     const closeBtn = document.getElementById('sidebarCloseBtn');
@@ -19,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 2. Integración con SweetAlert2 para Alertas Flash Automáticas
+    // 3. Integración con SweetAlert2 para Alertas Flash Automáticas
     const flashAlerts = document.querySelectorAll('[data-flash]');
     flashAlerts.forEach(function (alertEl) {
         const type = alertEl.getAttribute('data-flash');
@@ -38,7 +100,6 @@ document.addEventListener('DOMContentLoaded', function () {
             title = 'Advertencia';
         }
 
-        // Mostrar SweetAlert Toast elegante
         Swal.fire({
             toast: true,
             position: 'top-end',
@@ -51,41 +112,49 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 3. Confirmación SweetAlert2 para Eliminaciones y Acciones Críticas
-    document.querySelectorAll('.form-delete, [data-confirm]').forEach(function (element) {
-        element.addEventListener('click', function (e) {
-            const confirmMessage = element.getAttribute('data-confirm') || '¿Está seguro de eliminar este registro? Esta acción no se puede deshacer.';
-            e.preventDefault();
+    // 4. Tom Select: Dropdowns Búsqueda Escribible + Lista Completa Siempre Accesible
+    if (typeof TomSelect !== 'undefined') {
+        document.querySelectorAll('select:not(.no-tom-select)').forEach(function (selectEl) {
+            if (selectEl.tomselect) return;
 
-            Swal.fire({
-                title: '¿Confirmar eliminación?',
-                text: confirmMessage,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: '<i class="bi bi-trash-fill me-1"></i> Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true,
-                focusCancel: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (element.tagName === 'FORM') {
-                        element.submit();
-                    } else if (element.tagName === 'A' || element.tagName === 'BUTTON') {
-                        const form = element.closest('form');
-                        if (form) {
-                            form.submit();
-                        } else if (element.getAttribute('href')) {
-                            window.location.href = element.getAttribute('href');
-                        }
+            const isFilterForm = selectEl.closest('form[method="get"]');
+            const placeholder = selectEl.getAttribute('placeholder') || 
+                                (selectEl.options[0] ? selectEl.options[0].text : 'Seleccione o escriba para buscar...');
+
+            const ts = new TomSelect(selectEl, {
+                create: false,
+                allowEmptyOption: true,
+                maxOptions: 200,
+                placeholder: placeholder,
+                dropdownParent: 'body',
+                plugins: ['clear_button'],
+                render: {
+                    no_results: function(data, escape) {
+                        return '<div class="no-results p-2 text-muted fs-xs">No hay coincidencias para "' + escape(data.input) + '"</div>';
+                    }
+                },
+                onChange: function(value) {
+                    // Filtrado dinámico automático al seleccionar opción
+                    if (isFilterForm) {
+                        isFilterForm.submit();
                     }
                 }
             });
         });
+    }
+
+    // 5. Filtrado Dinámico Automático en Búsqueda por Texto (Debounce 450ms)
+    document.querySelectorAll('form[method="get"] input[name="search"]').forEach(function (searchInput) {
+        let timer = null;
+        searchInput.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                searchInput.form.submit();
+            }, 450);
+        });
     });
 
-    // 4. Modal Visualizador de Fotografía al hacer clic en miniatura
+    // 6. Modal Visualizador de Fotografía al hacer clic en miniatura
     const modalImage = document.getElementById('modalPreviewImage');
     const modalCaption = document.getElementById('modalPreviewCaption');
     const imageModalEl = document.getElementById('imagePreviewModal');
@@ -110,16 +179,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 5. Vista Previa en Vivo de Carga de Fotografía en Formulario
+    // 7. Vista Previa en Vivo de Fotografía al Seleccionar Archivo
     const fileInput = document.getElementById('fotografia-file-input');
     const imageLivePreview = document.getElementById('fotografia-live-preview');
     if (fileInput && imageLivePreview) {
         fileInput.addEventListener('change', function () {
             const file = this.files[0];
             if (file) {
-                // Validación en frontend de tipo y tamaño
-                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
+                const validExtensions = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!validExtensions.includes(file.type)) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Formato inválido',

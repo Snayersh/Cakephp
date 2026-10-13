@@ -51,7 +51,20 @@ class LogrosTable extends Table
         $validator
             ->date('fecha_ocurrencia', ['ymd', 'dmy'], 'Seleccione una fecha válida.')
             ->requirePresence('fecha_ocurrencia', 'create', 'La fecha de ocurrencia es obligatoria.')
-            ->notEmptyDate('fecha_ocurrencia', 'Debe especificar la fecha del acontecimiento.');
+            ->notEmptyDate('fecha_ocurrencia', 'Debe especificar la fecha del acontecimiento.')
+            ->add('fecha_ocurrencia', 'noFutura', [
+                'rule' => function ($value, $context) {
+                    if (empty($value)) return true;
+                    try {
+                        $date = new \DateTime((string)$value);
+                        $today = new \DateTime('today');
+                        return $date <= $today;
+                    } catch (\Throwable) {
+                        return false;
+                    }
+                },
+                'message' => 'La fecha de ocurrencia no puede ser una fecha futura.'
+            ]);
 
         return $validator;
     }

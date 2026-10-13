@@ -38,6 +38,7 @@ $this->assign('title', 'Editar Llamada de Atención');
                             'label' => false,
                             'class' => 'form-control',
                             'required' => true,
+                            'max' => date('Y-m-d'),
                             'value' => $llamada->fecha_ocurrencia ? $llamada->fecha_ocurrencia->format('Y-m-d') : '',
                         ]) ?>
                     </div>

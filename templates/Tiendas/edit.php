@@ -39,7 +39,7 @@ $this->assign('title', 'Editar Tienda');
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label" for="telefono">Teléfono (Guatemala +502)</label>
+                        <label class="form-label" for="telefono">Teléfono</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light text-muted fw-semibold"><i class="bi bi-telephone me-1"></i>+502</span>
                             <?= $this->Form->control('telefono', [
