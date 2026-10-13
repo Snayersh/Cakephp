@@ -17,7 +17,7 @@ use Cake\ORM\Entity;
  */
 class Tienda extends Entity
 {
-    protected array $_accessible = [
+    protected $_accessible = [
         'nombre' => true,
         'direccion' => true,
         'telefono' => true,

@@ -33,8 +33,11 @@ return [
     'Asset' => [],
 
     'Error' => [
-        'errorLevel' => E_ALL,
-        'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
+        'errorLevel' => E_ALL & ~E_USER_DEPRECATED,
+        'ignoredDeprecationPaths' => [
+            'vendor/composer/ClassLoader.php',
+            'config/bootstrap.php',
+        ],
         'skipLog' => [],
         'log' => true,
         'trace' => true,
@@ -45,12 +48,36 @@ return [
         'timeout' => 1440,
     ],
 
+    'Cache' => [
+        'default' => [
+            'className' => 'Cake\Cache\Engine\FileEngine',
+            'path' => CACHE,
+            'url' => env('CACHE_DEFAULT_URL', null),
+        ],
+        '_cake_core_' => [
+            'className' => 'Cake\Cache\Engine\FileEngine',
+            'prefix' => 'sterenfix_core_',
+            'path' => CACHE . 'persistent/',
+            'serialize' => true,
+            'duration' => '+2 minutes',
+            'url' => env('CACHE_CAKECORE_URL', null),
+        ],
+        '_cake_model_' => [
+            'className' => 'Cake\Cache\Engine\FileEngine',
+            'prefix' => 'sterenfix_model_',
+            'path' => CACHE . 'models/',
+            'serialize' => true,
+            'duration' => '+2 minutes',
+            'url' => env('CACHE_CAKEMODEL_URL', null),
+        ],
+    ],
+
     'Datasources' => [
         'default' => [
             'className' => 'Cake\Database\Connection',
-            'driver' => env('DB_DRIVER', 'CakeDC\OracleDriver\Database\Driver\Oracle'),
+            'driver' => env('DB_DRIVER', 'App\Database\Driver\Oracle'),
             'persistent' => false,
-            'host' => env('DB_HOST', 'sterenfix_db'),
+            'host' => env('DB_HOST', 'host.containers.internal'),
             'port' => env('DB_PORT', '1521'),
             'username' => env('DB_USERNAME', 'sterenfix'),
             'password' => env('DB_PASSWORD', 'SterenfixPassword123#'),
@@ -60,8 +87,6 @@ return [
             'flags' => [],
             'cacheMetadata' => true,
             'log' => false,
-            'server_version' => 23,
-            'autoincrement' => true,
             'quoteIdentifiers' => false,
         ],
     ],

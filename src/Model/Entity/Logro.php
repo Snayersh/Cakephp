@@ -18,7 +18,7 @@ use Cake\ORM\Entity;
  */
 class Logro extends Entity
 {
-    protected array $_accessible = [
+    protected $_accessible = [
         'empleado_id' => true,
         'descripcion' => true,
         'tipo' => true,

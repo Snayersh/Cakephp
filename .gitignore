@@ -31,3 +31,8 @@
 *.sublime-workspace
 .DS_Store
 Thumbs.db
+
+# Docker temporary archives
+docker/*.zip
+docker/*.tgz
+docker/*.tar.gz

@@ -7,12 +7,14 @@ declare(strict_types=1);
 require __DIR__ . '/paths.php';
 require ROOT . '/vendor/autoload.php';
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Datasource\ConnectionManager;
-use Cake\Error\ConsoleErrorHandler;
-use Cake\Error\ErrorHandler;
+use Cake\Error\ErrorTrap;
+use Cake\Error\ExceptionTrap;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 
 // Cargar variables de entorno desde .env si existe y no están definidas en getenv()
 $envFile = ROOT . DS . '.env';
@@ -27,7 +29,6 @@ if (file_exists($envFile)) {
             [$name, $value] = explode('=', $line, 2);
             $name = trim($name);
             $value = trim($value);
-            // Remover comillas envolventes si existen
             if ((str_starts_with($value, '"') && str_ends_with($value, '"')) ||
                 (str_starts_with($value, "'") && str_ends_with($value, "'"))) {
                 $value = substr($value, 1, -1);
@@ -57,13 +58,15 @@ date_default_timezone_set(Configure::read('App.defaultTimezone', 'America/Mexico
 mb_internal_encoding(Configure::read('App.encoding', 'UTF-8'));
 ini_set('intl.default_locale', Configure::read('App.defaultLocale', 'es_ES'));
 
-// Manejador de errores
-$isCli = PHP_SAPI === 'cli';
-if ($isCli) {
-    (new ConsoleErrorHandler(Configure::read('Error')))->register();
-} else {
-    (new ErrorHandler(Configure::read('Error')))->register();
-}
+// Manejador moderno de errores y excepciones CakePHP 4.4+
+(new ErrorTrap(Configure::read('Error')))->register();
+(new ExceptionTrap(Configure::read('Error')))->register();
+
+// Inicializar Caché
+Cache::setConfig(Configure::consume('Cache'));
+
+// Inicializar Router
+Router::reload();
 
 // Configurar conexiones de base de datos
 ConnectionManager::setConfig(Configure::consume('Datasources'));

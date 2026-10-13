@@ -16,7 +16,7 @@ use Cake\ORM\Entity;
  */
 class Puesto extends Entity
 {
-    protected array $_accessible = [
+    protected $_accessible = [
         'nombre' => true,
         'descripcion' => true,
         'creado_en' => true,

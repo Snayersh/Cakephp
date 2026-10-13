@@ -30,7 +30,7 @@ use DateTime;
  */
 class Empleado extends Entity
 {
-    protected array $_accessible = [
+    protected $_accessible = [
         'nombres' => true,
         'apellidos' => true,
         'fecha_nacimiento' => true,
@@ -45,7 +45,7 @@ class Empleado extends Entity
         'llamadas_atencion' => true,
     ];
 
-    protected array $_virtual = [
+    protected $_virtual = [
         'nombre_completo',
         'edad',
         'salario_formateado',
@@ -69,10 +69,11 @@ class Empleado extends Entity
             return null;
         }
 
-        $birthDate = $this->fecha_nacimiento instanceof FrozenDate
-            ? $this->fecha_nacimiento->toNative()
-            : new DateTime((string)$this->fecha_nacimiento);
+        $formatted = $this->fecha_nacimiento instanceof \DateTimeInterface
+            ? $this->fecha_nacimiento->format('Y-m-d')
+            : (string)$this->fecha_nacimiento;
 
+        $birthDate = new DateTime($formatted);
         $now = new DateTime();
         return $now->diff($birthDate)->y;
     }

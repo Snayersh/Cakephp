@@ -10,21 +10,20 @@ class ReportesController extends AppController
 {
     public function index()
     {
-        // Resumen general para la central de reportes
-        $this->fetchTable('Empleados');
-        $this->fetchTable('Tiendas');
-        $this->fetchTable('Logros');
-        $this->fetchTable('LlamadasAtencion');
+        $empleadosTable = $this->fetchTable('Empleados');
+        $tiendasTable = $this->fetchTable('Tiendas');
+        $logrosTable = $this->fetchTable('Logros');
+        $llamadasTable = $this->fetchTable('LlamadasAtencion');
 
-        $totalEmpleados = $this->Empleados->find()->count();
-        $totalTiendas = $this->Tiendas->find()->count();
+        $totalEmpleados = $empleadosTable->find()->count();
+        $totalTiendas = $tiendasTable->find()->count();
 
-        $queryNomina = $this->Empleados->find();
+        $queryNomina = $empleadosTable->find();
         $queryNomina->select(['total' => $queryNomina->func()->sum('salario')]);
         $totalNomina = (float)($queryNomina->first()->total ?? 0);
 
-        $totalLogros = $this->Logros->find()->count();
-        $totalLlamadas = $this->LlamadasAtencion->find()->count();
+        $totalLogros = $logrosTable->find()->count();
+        $totalLlamadas = $llamadasTable->find()->count();
 
         $this->set(compact('totalEmpleados', 'totalTiendas', 'totalNomina', 'totalLogros', 'totalLlamadas'));
     }
@@ -35,12 +34,12 @@ class ReportesController extends AppController
      */
     public function empleados()
     {
-        $this->fetchTable('Empleados');
+        $empleadosTable = $this->fetchTable('Empleados');
         $tiendaId = $this->getRequest()->getQuery('tienda_id');
         $puestoId = $this->getRequest()->getQuery('puesto_id');
         $search = $this->getRequest()->getQuery('search');
 
-        $query = $this->Empleados->find()
+        $query = $empleadosTable->find()
             ->contain(['Puestos', 'Tiendas'])
             ->order(['Empleados.nombres' => 'ASC', 'Empleados.apellidos' => 'ASC']);
 
@@ -71,8 +70,8 @@ class ReportesController extends AppController
 
         $promedioSalario = count($empleados) > 0 ? ($totalSalarios / count($empleados)) : 0;
 
-        $tiendas = $this->Empleados->Tiendas->find('list')->order(['nombre' => 'ASC'])->all();
-        $puestos = $this->Empleados->Puestos->find('list')->order(['nombre' => 'ASC'])->all();
+        $tiendas = $empleadosTable->Tiendas->find('list')->order(['nombre' => 'ASC'])->all();
+        $puestos = $empleadosTable->Puestos->find('list')->order(['nombre' => 'ASC'])->all();
 
         $this->set(compact('empleados', 'totalSalarios', 'promedioSalario', 'tiendas', 'puestos', 'tiendaId', 'puestoId', 'search'));
     }
@@ -83,10 +82,10 @@ class ReportesController extends AppController
      */
     public function salariosTienda()
     {
-        $this->fetchTable('Tiendas');
-        $this->fetchTable('Empleados');
+        $tiendasTable = $this->fetchTable('Tiendas');
+        $empleadosTable = $this->fetchTable('Empleados');
 
-        $tiendas = $this->Tiendas->find()
+        $tiendas = $tiendasTable->find()
             ->order(['Tiendas.nombre' => 'ASC'])
             ->all();
 
@@ -95,8 +94,7 @@ class ReportesController extends AppController
         $totalEmpleadosGlobal = 0;
 
         foreach ($tiendas as $tienda) {
-            // Empleados ordenados estrictamente por salario DE MAYOR A MENOR dentro de cada tienda
-            $empleados = $this->Empleados->find()
+            $empleados = $empleadosTable->find()
                 ->contain(['Puestos'])
                 ->where(['Empleados.tienda_id' => $tienda->id])
                 ->order(['Empleados.salario' => 'DESC', 'Empleados.nombres' => 'ASC'])
@@ -128,13 +126,13 @@ class ReportesController extends AppController
      */
     public function logros()
     {
-        $this->fetchTable('Logros');
+        $logrosTable = $this->fetchTable('Logros');
         $empleadoId = $this->getRequest()->getQuery('empleado_id');
         $tipo = $this->getRequest()->getQuery('tipo');
         $fechaDesde = $this->getRequest()->getQuery('fecha_desde');
         $fechaHasta = $this->getRequest()->getQuery('fecha_hasta');
 
-        $query = $this->Logros->find()
+        $query = $logrosTable->find()
             ->contain(['Empleados' => ['Tiendas', 'Puestos']])
             ->order(['Logros.fecha_ocurrencia' => 'DESC', 'Logros.id' => 'DESC']);
 
@@ -166,7 +164,7 @@ class ReportesController extends AppController
             }
         }
 
-        $empleados = $this->Logros->Empleados->find('list', [
+        $empleados = $logrosTable->Empleados->find('list', [
             'keyField' => 'id',
             'valueField' => function ($emp) {
                 return $emp->nombre_completo;
@@ -182,13 +180,15 @@ class ReportesController extends AppController
      */
     public function llamadasAtencion()
     {
-        $this->fetchTable('LlamadasAtencion');
+        $llamadasTable = $this->fetchTable('LlamadasAtencion');
+        $tiendasTable = $this->fetchTable('Tiendas');
+
         $empleadoId = $this->getRequest()->getQuery('empleado_id');
         $tiendaId = $this->getRequest()->getQuery('tienda_id');
         $fechaDesde = $this->getRequest()->getQuery('fecha_desde');
         $fechaHasta = $this->getRequest()->getQuery('fecha_hasta');
 
-        $query = $this->LlamadasAtencion->find()
+        $query = $llamadasTable->find()
             ->contain(['Empleados' => ['Tiendas', 'Puestos']])
             ->order(['LlamadasAtencion.fecha_ocurrencia' => 'DESC', 'LlamadasAtencion.id' => 'DESC']);
 
@@ -212,15 +212,14 @@ class ReportesController extends AppController
 
         $llamadas = $query->all();
 
-        $empleados = $this->LlamadasAtencion->Empleados->find('list', [
+        $empleados = $llamadasTable->Empleados->find('list', [
             'keyField' => 'id',
             'valueField' => function ($emp) {
                 return $emp->nombre_completo;
             },
         ])->order(['nombres' => 'ASC'])->all();
 
-        $this->fetchTable('Tiendas');
-        $tiendas = $this->Tiendas->find('list')->order(['nombre' => 'ASC'])->all();
+        $tiendas = $tiendasTable->find('list')->order(['nombre' => 'ASC'])->all();
 
         $this->set(compact('llamadas', 'empleados', 'tiendas', 'empleadoId', 'tiendaId', 'fechaDesde', 'fechaHasta'));
     }

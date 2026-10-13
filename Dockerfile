@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libzip-dev \
+    libonig-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Asegurar symlink para libaio en Debian 13/Bookworm/Trixie
@@ -22,14 +23,17 @@ RUN if [ -f /usr/lib/x86_64-linux-gnu/libaio.so.1t64 ]; then \
         ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1; \
     fi
 
-# Configuración y descarga de Oracle Instant Client 21.13
+# Configuración y descompresión de Oracle Instant Client 21.13
 ENV ORACLE_HOME=/opt/oracle/instantclient
 ENV LD_LIBRARY_PATH=/opt/oracle/instantclient
 
-RUN mkdir -p /opt/oracle && \
-    curl -fSL https://download.oracle.com/otn_software/linux/instantclient/2113000/instantclient-basic-linux.x64-21.13.0.0.0dbru.zip -o /opt/oracle/instantclient-basic.zip && \
-    curl -fSL https://download.oracle.com/otn_software/linux/instantclient/2113000/instantclient-sdk-linux.x64-21.13.0.0.0dbru.zip -o /opt/oracle/instantclient-sdk.zip && \
-    unzip /opt/oracle/instantclient-basic.zip -d /opt/oracle/ && \
+# Copiar archivos descargados localmente
+RUN mkdir -p /opt/oracle
+COPY docker/instantclient-basic.zip /opt/oracle/instantclient-basic.zip
+COPY docker/instantclient-sdk.zip /opt/oracle/instantclient-sdk.zip
+COPY docker/oci8-3.3.0.tgz /tmp/oci8.tgz
+
+RUN unzip /opt/oracle/instantclient-basic.zip -d /opt/oracle/ && \
     unzip /opt/oracle/instantclient-sdk.zip -d /opt/oracle/ && \
     rm -f /opt/oracle/*.zip && \
     mv /opt/oracle/instantclient_21_13 /opt/oracle/instantclient && \
@@ -37,8 +41,9 @@ RUN mkdir -p /opt/oracle && \
     ldconfig
 
 # Compilar e instalar extensiones PHP: oci8 y pdo_oci
-RUN echo "instantclient,/opt/oracle/instantclient" | pecl install oci8-3.3.0 && \
+RUN echo "instantclient,/opt/oracle/instantclient" | pecl install /tmp/oci8.tgz && \
     docker-php-ext-enable oci8 && \
+    rm -f /tmp/oci8.tgz && \
     docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/oracle/instantclient && \
     docker-php-ext-install -j$(nproc) pdo_oci
 
@@ -46,10 +51,8 @@ RUN echo "instantclient,/opt/oracle/instantclient" | pecl install oci8-3.3.0 && 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) \
     intl \
-    mbstring \
     gd \
-    zip \
-    pdo
+    zip
 
 # Instalar Composer desde la imagen oficial
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
